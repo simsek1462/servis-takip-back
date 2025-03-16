@@ -4,14 +4,14 @@ const { generateAccessToken, generateRefreshToken } = require('../config/jwt');
 
 const register = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email,phone, password } = req.body;
         const userExists = await User.findOne({ email });
 
         if (userExists) {
             return res.status(400).json({ message: 'Bu email zaten kayıtlı' });
         }
 
-        const user = await User.create({ name, email, password });
+        const user = await User.create({ name, email,phone, password });
         res.status(201).json({ message: 'Kullanıcı oluşturuldu', user });
     } catch (error) {
         res.status(500).json({ message: 'Sunucu hatası',error:error.message });
@@ -20,11 +20,11 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
     try {
-        const { email, password } = req.body;
-        const user = await User.findOne({ email });
+        const { phone, password } = req.body;
+        const user = await User.findOne({ phone });
 
         if (!user || !(await user.matchPassword(password))) {
-            return res.status(401).json({ message: 'Geçersiz email veya şifre' });
+            return res.status(401).json({ message: 'Geçersiz telefon numarası veya şifre' });
         }
 
         const accessToken = generateAccessToken(user);
